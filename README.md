@@ -36,17 +36,17 @@ As an example, your heap would start at word 0. If your first call is myalloc(5)
 
 You will have four primary functions in your assignment, which MUST be named as follows:
 
-- myalloc(size)
-- -takes an integer value indicating the number of bytes to allocate for the payload of the block
-- -returns a "pointer" to the starting address of the payload of the allocated block
+### myalloc(size)
+takes an integer value indicating the number of bytes to allocate for the payload of the block
+returns a "pointer" to the starting address of the payload of the allocated block
 The "pointer" above can take any form you like, depending on the data structure you use to represent your heap
-- myrealloc(pointer, size)
+### myrealloc(pointer, size)
 takes a pointer to an allocated block and an integer value to resize the block to
 returns a "pointer" to the new block
 copies the payload from the old block to the new block
 frees the old block
 a call to myrealloc with a size of zero is equivalent to a call to myfree
-myfree(pointer)
+### myfree(pointer)
 you must use a LIFO policy for explicit free lists
 prev pointer should be first and next pointer should be second (opposite from slides)
 frees the block pointed to by the input parameter "pointer"
@@ -54,18 +54,21 @@ returns nothing
 only works if "pointer" represents a previously allocated or reallocated block that has not yet been freed
 otherwise, does not change the heap
 coalesce after freeing, coalesce lower before coalescing higher addresses, and update headers last
-mysbrk(size)
+### mysbrk(size)
 grows or shrinks the size of the heap by a number of words specified by the input parameter "size"
 you may call this whenever you need to in the course of a simulation, as you need to grow the heap only as much as needed for the allocation, do not extend a free block at end of previous space, use a totally new block
 this call will return an error and halt the simulation if your heap would need to grow past the maximum size of 100,000 words
-User Options
+
+# User Options
+
 
 The user must be able to specify the following (either in a GUI or on the command line) for each run of your simulator:
 
 Input text file
 Implicit or Explicit free list
 First-fit or Best-fit allocation
-Input
+
+# Input
 
 You will process a text file to get the series of allocation, reallocation, and free calls that your simulator should make on your simulated heap. The input file will be in the form of a simple comma-separated value format in which each line describes a single call.
 
@@ -104,7 +107,7 @@ The above example assumes that you use the reference number appended to the stri
 
 You do not need to validate the input for this project. You may assume that all input files are formatted correctly when you process them.
 
-Output
+# Output
 
 Your output from each run will be another comma-separated value text file called "output.txt"
 
@@ -134,13 +137,13 @@ In the following example, we use bit 0 of header and footer to indicate the use 
 
 The first value indicates the word in question, and the second indicates the contents of that word (represented in hexadecimal). That is why there are 8 hexadecimal digits for each entry in the example above. Each word will contain 4 bytes since this is a 32-bit system. Your output file will be checked to ensure that the heap contains the correct headers, footers, and pointers (in the case of explicit free lists) for the simulation that has just been run.
 
-Submission
+# Submission
 
 Submit your source code and a PDF file containing your report to the Dropbox called "Memory_Allocation_Lab" in Elearning. 
 
 Your report will simply contain your name, all references, explanations of what each reference was used to help you with, and an explanation of how to run your code. Indicate what IDE (if any) you used, compilation instructions, invocation instructions, etc. You should explain in detail how to run your program. I will test it with input files in the form detailed above, and you can create your own to test things out as you work on your assignment.
 
-Evaluation
+# Evaluation
 
 Report: 10%
 Programming Style: 10%
