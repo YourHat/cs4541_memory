@@ -74,7 +74,7 @@ You will process a text file to get the series of allocation, reallocation, and 
 
 Example:
 
-a, 5, 0 \n
+a, 5, 0<b>
 f, 0
 a, 10, 1
 r, 20, 1, 2
