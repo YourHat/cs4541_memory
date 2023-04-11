@@ -79,24 +79,27 @@ f, 0
 a, 10, 1
 r, 20, 1, 2
 f, 2
-Calls to myalloc will be indicated in the input file as follows:
 
+### Calls to myalloc will be indicated in the input file as follows:
 An "a" to indicate that this is an allocation call
 An integer to indicate the "size" parameter
 An integer between 0 and 999 to act as a reference the block allocated by the call
 This value will be used to tie future calls to "myfree" and "myrealloc"
 You may use this value any way you wish. It can be used to name pointers returned by your simulator, as the key to key-value pairs that keep track of your simulated "pointer"s, etc. It is simply there to ensure that we are calling "myrealloc" and "myfree" on the correct blocks
-Calls to myrealloc will be indicated in the input file as follows:
+
+### Calls to myrealloc will be indicated in the input file as follows:
 
 An "r" to indicate that this is a reallocation call
 An integer to indicate the "size" parameter
 An integer between 0 and 999 to reference which block created by a previous call to myalloc we are resizing
 An integer between 0 and 999 to reference the new block allocated by the call
-Calls to myfree will be indicated in the input file as follows:
+
+### Calls to myfree will be indicated in the input file as follows:
 
 An "f" to indicate that this is a free call
 An integer between 0 and 999 to specify the allocation call that this call is freeing
-So, let's break down the example above:
+
+### So, let's break down the example above:
 
 a, 5, 0      // ptr0 = myalloc(5)
 f, 0         // myfree(ptr0)
