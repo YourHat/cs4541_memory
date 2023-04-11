@@ -19,27 +19,28 @@ All work should be your own. You are prohibited from using any code that is not 
 
 ## Your Heap
 
-Start your heap at address 0
-Assume a 32-bit system (so each word is 4 bytes)
-Assume double-word alignment of all allocated blocks
-Calls to myalloc and myrealloc take an input parameter indicating the size of the allocation in bytes
-Invalid calls to any of your primary functions will give an error but not crash your simulator (though they may have no effect on the heap)
-Your initial heap size will be 1000 words, and you may expand your heap to 100,000 words maximum
+- Start your heap at address 0
+- Assume a 32-bit system (so each word is 4 bytes)
+- Assume double-word alignment of all allocated blocks
+- Calls to myalloc and myrealloc take an input parameter indicating the size of the allocation in bytes
+- Invalid calls to any of your primary functions will give an error but not crash your simulator (though they may have no effect on the heap)
+- Your initial heap size will be 1000 words, and you may expand your heap to 100,000 words maximum
+
 As an example, your heap would start at word 0. If your first call is myalloc(5), then you would start the header at word 1, your payload at word 2, and your footer at word 4 to meet alignment requirements. This is because the payload would have to start at an address divisible by 8, and take up two words, 5 bytes for the payload and 3 bytes of padding. So, your header would start at word 1 (address 4), the payload would start at word 2 (address 8), and your footer would start at word 4 (address 16). This would allow your next header to start at word 5 (address 20) and the next payload to start at word 6 (address 24). 
 
          |header  |     payload     |footer  |        
 |--------|--------|--------|--------|--------|--------|
 0        1        2        3        4        5        6
 
-Primary Functions
+# Primary Functions
 
 You will have four primary functions in your assignment, which MUST be named as follows:
 
-myalloc(size)
-takes an integer value indicating the number of bytes to allocate for the payload of the block
-returns a "pointer" to the starting address of the payload of the allocated block
+- myalloc(size)
+- -takes an integer value indicating the number of bytes to allocate for the payload of the block
+- -returns a "pointer" to the starting address of the payload of the allocated block
 The "pointer" above can take any form you like, depending on the data structure you use to represent your heap
-myrealloc(pointer, size)
+- myrealloc(pointer, size)
 takes a pointer to an allocated block and an integer value to resize the block to
 returns a "pointer" to the new block
 copies the payload from the old block to the new block
