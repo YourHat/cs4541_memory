@@ -1,5 +1,5 @@
-Instructions
-Introduction
+# Instructions
+## Introduction
 
 In this assignment, you will create a memory allocation simulator. You will be evaluated only on the correctness of your simulated heap, so you don't have to worry about throughput. You may use any programming language you choose from the following options:
 
