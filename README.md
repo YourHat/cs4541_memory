@@ -1,22 +1,23 @@
-# Instructions
-## Introduction
+### Instructions
+# Introduction
 
 In this assignment, you will create a memory allocation simulator. You will be evaluated only on the correctness of your simulated heap, so you don't have to worry about throughput. You may use any programming language you choose from the following options:
 
-C
-C++
-Java
-Ruby
-Python
+- C
+- C++
+- Java
+- Ruby
+- Python
+- 
 You will not actually make any memory calls in your program. You will simply operate on a simulated heap. You may make all the decisions about how you represent your simulated heap, but you will need to accept input and produce output according to the specifications that follow in the "Specifications" section.
 
 You read a series of allocation, reallocation, and free calls from an input text file, detailed in the "Specifications" section below, and process them using both implicit and explicit free list approaches. You must use both headers and footers for blocks in both approaches. You will also allow the user to choose whether to use a First-fit or Best-fit approach to allocating memory blocks. For all cases, you will use immediate coalescing of free blocks.
 
 All work should be your own. You are prohibited from using any code that is not your own and from working in groups. If you find examples of HOW to do something on the internet or elsewhere you must reference the source and what you used it for in your report. For example, you may look for examples on how to write output to a file, as long as you give credit to the source in your references and specify the reason you referenced that resource. Any use of code that is not your own will be considered to be academic dishonesty. You MUST write your own code (no use of ANY code from the internet or elsewhere) for the four primary functions (myalloc, myrealloc, myfree, mysbrk) in the assignment.
 
-Specifications
+# Specifications
 
-Your Heap
+## Your Heap
 
 Start your heap at address 0
 Assume a 32-bit system (so each word is 4 bytes)
