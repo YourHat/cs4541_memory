@@ -75,10 +75,10 @@ You will process a text file to get the series of allocation, reallocation, and 
 Example:
 
 a, 5, 0<br>
-f, 0
-a, 10, 1
-r, 20, 1, 2
-f, 2
+f, 0<br>
+a, 10, 1<br>
+r, 20, 1, 2<br>
+f, 2<br>
 
 ### Calls to myalloc will be indicated in the input file as follows:
 An "a" to indicate that this is an allocation call
@@ -101,11 +101,11 @@ An integer between 0 and 999 to specify the allocation call that this call is fr
 
 ### So, let's break down the example above:
 
-a, 5, 0      // ptr0 = myalloc(5)
-f, 0         // myfree(ptr0)
-a, 10, 1     // ptr1 = myalloc(10)
-r, 20, 1, 2  // ptr2 = myrealloc(ptr1,20)
-f, 2         // myfree(ptr2)
+a, 5, 0      // ptr0 = myalloc(5)<br>
+f, 0         // myfree(ptr0)<br>
+a, 10, 1     // ptr1 = myalloc(10)<br>
+r, 20, 1, 2  // ptr2 = myrealloc(ptr1,20)<br>
+f, 2         // myfree(ptr2)<br>
 The above example assumes that you use the reference number appended to the string "ptr" as your returned pointer names, but, again, this is not required. You may use the reference numbers however you wish, but this is one example of how you can use them to make sure that you are calling your functions on the correct blocks.
 
 You do not need to validate the input for this project. You may assume that all input files are formatted correctly when you process them.
@@ -118,25 +118,25 @@ Simply indicate the value of each word in your simulated heap in hexadecimal for
 
 In the following example, we use bit 0 of header and footer to indicate the use of current block: 1 for allocated and 0 for free. We do not use bits 1 and 2. Instead, we use header of the next block and footer of the previous block to check for possible coalescing. For myrealloc(), we implement it as myalloc() followed by myfree(). The output of running the above example using implicit free list could be:
 
-  0, 0x00000001 // placeholder
-  1, 0x00000F98 // header 
-  2,            // payload
-  3,            // payload
-  4, 0x00000011 // remaining footer of myalloc(5)
-  5, 0x00000F88 // remaining header of free block after myalloc(5)
-  6, 0x00000018 // remaining footer of myalloc(10)
-  7, 0x00000021 // remaining header of myrealloc(20)
-     ......
- 10, 0x00000011 // copied payload from word 4 of myrealloc(20)
- 11, 0x00000F88 // copied payload from word 5 of myrealloc(20)
-     ......
- 14, 0x00000021 // remaining footer of myrealloc(20) 
- 15, 0x00000F60 // remaining header of free block after myrealloc(20)
+  0, 0x00000001 // placeholder<br>
+  1, 0x00000F98 // header <br>
+  2,            // payload<br>
+  3,            // payload<br>
+  4, 0x00000011 // remaining footer of myalloc(5)<br>
+  5, 0x00000F88 // remaining header of free block after myalloc(5)<br>
+  6, 0x00000018 // remaining footer of myalloc(10)<br>
+  7, 0x00000021 // remaining header of myrealloc(20)<br>
+     ......<br>
+ 10, 0x00000011 // copied payload from word 4 of myrealloc(20)<br>
+ 11, 0x00000F88 // copied payload from word 5 of myrealloc(20)<br>
+     ......<br>
+ 14, 0x00000021 // remaining footer of myrealloc(20) <br>
+ 15, 0x00000F60 // remaining header of free block after myrealloc(20)<br>
 
-     ......
-
-998, 0x00000F98 // footer
-999, 0x00000001 // placeholder
+     .....
+<br>
+998, 0x00000F98 // footer<br>
+999, 0x00000001 // placeholder<br>
 
 The first value indicates the word in question, and the second indicates the contents of that word (represented in hexadecimal). That is why there are 8 hexadecimal digits for each entry in the example above. Each word will contain 4 bytes since this is a 32-bit system. Your output file will be checked to ensure that the heap contains the correct headers, footers, and pointers (in the case of explicit free lists) for the simulation that has just been run.
 
@@ -148,10 +148,10 @@ Your report will simply contain your name, all references, explanations of what 
 
 # Evaluation
 
-Report: 10%
-Programming Style: 10%
-Program correctness: 80% 
-(Implicit first-fit: 20%, best-fit: 20%, Explicit first-fit: 20%, best-fit: 20%)
-Attachments
-examples.zip
-(98.66 KB)
+Report: 10%<br>
+Programming Style: 10%<br>
+Program correctness: 80% <br>
+(Implicit first-fit: 20%, best-fit: 20%, Explicit first-fit: 20%, best-fit: 20%)<br>
+Attachments<br>
+examples.zip<br>
+(98.66 KB)<br>
