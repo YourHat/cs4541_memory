@@ -26,7 +26,8 @@ def main(arg):
     virMem = [None] *1000
     pointer_dict = {} 
     virMem[0],virMem[1],virMem[998],virMem[999] = 1,3992,3992,1
-    with open("examples/examples/" + input_file, "r") as f:
+    #with open("examples/examples/" + input_file, "r") as f:
+    with open(input_file, "r") as f:
         for line in f:
             print(line)
             oper = line.split(",")
@@ -34,10 +35,13 @@ def main(arg):
             if oper[0] == "a":
                 pointer_dict[int(oper[2].strip().strip('\n'))] = myalloc(int(oper[1]))
             elif oper[0] == "f":
-                if not oper[1] == ' 2\n':
-                    myfree(pointer_dict[int(oper[1].strip().strip('\n'))])
-                    pointer_dict.pop(int(oper[1]))
-    
+                myfree(pointer_dict[int(oper[1].strip().strip('\n'))])
+                pointer_dict.pop(int(oper[1]))
+            elif oper[0] == "r":
+                pointer_dict[int(oper[3].strip().strip('\n'))] = myrealloc(pointer_dict[int(oper[2])],int(oper[1]))
+                myfree(pointer_dict[int(oper[2])])
+                pointer_dict.pop(int(oper[2]))
+
 
     print(pointer_dict)
     print_result(virMem)
@@ -53,7 +57,7 @@ def myalloc(size):
     while(True):
         print(n)
         print(virMem[n])
-        if virMem[n] & 1 == 0:
+        if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
             break
         else:
             n = n + (virMem[n] - 1) // 4
@@ -73,7 +77,29 @@ def myrealloc(pointer, size):
     frees the old block
     a call to myrealloc with a size of zero is equivalent to a call to my free
     """
-    pass
+    n = 1
+    free_size = 0
+    while(True):
+        print(n)
+        print(virMem[n])
+        if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
+            break
+        elif virMem[n] & 1 == 0 and virMem[n] < 8 + (((size//8) + 1) * 8):
+            n = n + virMem[n]//4
+        else:
+            n = n + (virMem[n] - 1) // 4
+    free_size = virMem[n]
+    size_block =  (((size//8) + 1)*8) + 8 + 1
+    virMem[n] = size_block
+    virMem[n + ((size_block - 1)//4) - 1] = size_block
+    virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+    virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+
+    for old_block in range((virMem[pointer]-9)//4):
+        virMem[n + 1 + old_block] = virMem[pointer + 1 + old_block]
+
+
+    return n
 
 
 def myfree(pointer):
@@ -86,7 +112,37 @@ def myfree(pointer):
     otherwise, does not change the heap
     coalesce after freeing. coalesce lower before coalescing higher address, and update headers last
     """
-    virMem[pointer] = 0
+    free_amount = 0
+
+    if virMem[pointer - 1] & 1 == 0 and virMem[pointer + (virMem[pointer]-1)//4] & 1 == 0: #free and free
+        free_amount = virMem[pointer - 1]
+        free_amount = free_amount + virMem[pointer] -1
+        virMem[pointer - (virMem[pointer -1]//4)] = free_amount
+        virMem[pointer - (virMem[pointer-1]//4) + (free_amount//4) -1] = free_amount
+
+        pointer = pointer - (virMem[pointer -1]//4)
+
+        free_amount = virMem[pointer + (virMem[pointer]-1)//4]
+        free_amount = free_amount + virMem[pointer] - 1
+        virMem[pointer] = free_amount
+        virMem[pointer + (free_amount//4) - 1] = free_amount
+
+    elif virMem[pointer - 1] & 1 == 0 and virMem[pointer + (virMem[pointer]-1)//4] & 1 == 1: #free and alloced
+        free_amount = virMem[pointer - 1]
+        free_amount = free_amount + virMem[pointer] -1
+        virMem[pointer - (virMem[pointer -1]//4)] = free_amount
+        virMem[pointer - (virMem[pointer-1]//4) + (free_amount//4) -1] = free_amount
+
+    elif virMem[pointer - 1] & 1 == 1 and virMem[pointer + (virMem[pointer]-1)//4] & 1 == 0: #alloced and free
+        free_amount = virMem[pointer + (virMem[pointer]-1)//4]
+        free_amount = free_amount + virMem[pointer] - 1
+        virMem[pointer] = free_amount
+        virMem[pointer + (free_amount//4) - 1] = free_amount
+
+    else:# alloced and alloced
+        virMem[pointer] = virMem[pointer]-1
+        virMem[pointer + (virMem[pointer])//4 - 1] = virMem[pointer]
+
     pass
 
 def mysbrk(size):
