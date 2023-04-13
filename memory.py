@@ -16,25 +16,31 @@ import sys # to get argv
 
 
 def main(arg):
+    global pointer_dict, virMem
+    input_file = ""
     try: #error handling
         input_file = arg[1]
         print(input_file)
     except: #if error happens
         print("error")
-    VirMem = [None]*1000
-    pointer_list = []   
-    VirMem[0],VirMem[1],VirMem[998],VirMem[999] = 1,3992,3992,1
+    virMem = [None] *1000
+    pointer_dict = {} 
+    virMem[0],virMem[1],virMem[998],virMem[999] = 1,3992,3992,1
     with open("examples/examples/" + input_file, "r") as f:
         for line in f:
             print(line)
             oper = line.split(",")
             print(oper)
             if oper[0] == "a":
-
-                pointer_list.append(oper[2].strip().strip('\n'))
+                pointer_dict[int(oper[2].strip().strip('\n'))] = myalloc(int(oper[1]))
+            elif oper[0] == "f":
+                if not oper[1] == ' 2\n':
+                    myfree(pointer_dict[int(oper[1].strip().strip('\n'))])
+                    pointer_dict.pop(int(oper[1]))
     
-    print(pointer_list)
-    print_result(VirMem)
+
+    print(pointer_dict)
+    print_result(virMem)
     
 
 def myalloc(size):
@@ -42,8 +48,22 @@ def myalloc(size):
     takes an integer value indicating the number of bytes to allocate for the pyload of the block
     returns a pointer to the starting address of the pyload of the allocated bloack
     """
-    pass
-
+    n = 1
+    free_size = 0
+    while(True):
+        print(n)
+        print(virMem[n])
+        if virMem[n] & 1 == 0:
+            break
+        else:
+            n = n + (virMem[n] - 1) // 4
+    free_size = virMem[n]
+    size_block =  (((size//8) + 1)*8) + 8 + 1
+    virMem[n] = size_block
+    virMem[n + ((size_block - 1)//4) - 1] = size_block
+    virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+    virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+    return n
 
 def myrealloc(pointer, size):
     """
@@ -66,6 +86,7 @@ def myfree(pointer):
     otherwise, does not change the heap
     coalesce after freeing. coalesce lower before coalescing higher address, and update headers last
     """
+    virMem[pointer] = 0
     pass
 
 def mysbrk(size):
