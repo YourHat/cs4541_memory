@@ -19,11 +19,23 @@ def main(arg):
     try: #error handling
         input_file = arg[1]
         print(input_file)
-
     except: #if error happens
         print("error")
+    VirMem = [None]*1000
+    pointer_list = []   
+    VirMem[0],VirMem[1],VirMem[998],VirMem[999] = 1,3992,3992,1
+    with open("examples/examples/" + input_file, "r") as f:
+        for line in f:
+            print(line)
+            oper = line.split(",")
+            print(oper)
+            if oper[0] == "a":
 
-
+                pointer_list.append(oper[2].strip().strip('\n'))
+    
+    print(pointer_list)
+    print_result(VirMem)
+    
 
 def myalloc(size):
     """
@@ -67,7 +79,13 @@ def mysbrk(size):
     """
     pass
 
-
+def print_result(memory):
+    for block_num in range(len(memory)):
+        if memory[block_num] == None:
+            print("{}, {}".format(block_num, " "))
+        else: 
+            print("{}, 0x{:08X}".format(block_num, memory[block_num]))
+    
 
 
 if __name__ == "__main__":
