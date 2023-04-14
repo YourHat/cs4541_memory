@@ -10,7 +10,7 @@ start your heap at address 0
 initial heap will be 1000 words
 """
 import sys # to get argv
-
+import time
 
 
 
@@ -54,14 +54,24 @@ def myalloc(size):
     """
     n = 1
     free_size = 0
+    size_needed = 0
+    if size%8 != 0:
+        size_needed = 8
+    size_needed = size_needed + (((size//8)*8) +8)
     while(True):
         print(n)
+        #time.sleep(1)
         print("lenght of list")
         print(len(virMem))
+        print(virMem[-2])
+        #print_result(virMem)
+        
         if n != len(virMem) -1:
-            if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
-                break
-            elif virMem[n] & 1 == 0 and virMem[n] < 8 + (((size//8) + 1) * 8):
+            print(virMem[n], n, size )
+             
+            if virMem[n] & 1 == 0 and virMem[n] >= size_needed:
+                   break
+            elif virMem[n] & 1 == 0 and virMem[n] <size_needed:
                 n = n + virMem[n]//4
             else:
                 n = n + (virMem[n] - 1) // 4
@@ -74,8 +84,9 @@ def myalloc(size):
     size_block = size_block + (((size//8))*8) + 8 + 1
     virMem[n] = size_block
     virMem[n + ((size_block - 1)//4) - 1] = size_block
-    virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
-    virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+    if (n + ((size_block - 1)//4)) != len(virMem) -1:
+        virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+        virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
     return n
 
 def myrealloc(pointer, size):
@@ -88,21 +99,26 @@ def myrealloc(pointer, size):
     """
     n = 1
     free_size = 0
+    size_needed = 0
+    if size%8 != 0:
+        size_needed = 8
+    size_needed = size_needed + (((size//8)*8) +8)
     while(True):
         #print(n)
-        #print(virMem[n])
         if n != len(virMem):
-            if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
+            if virMem[n] & 1 == 0 and virMem[n] >= size_needed:
                 break
-            elif virMem[n] & 1 == 0 and virMem[n] < 8 + (((size//8) + 1) * 8):
+            elif virMem[n] & 1 == 0 and virMem[n] < size_needed:
                 n = n + virMem[n]//4
             else:
                 n = n + (virMem[n] - 1) // 4
         else:
+            print(virMem[-2])
             if virMem[-2] & 1 == 0:
                 n = n - virMem[-2]//4 
             else:
                 n = n - (virMem[-2]-1)//4
+            print("n -changed ", n)
             mysbrk(size)
     free_size = virMem[n]
     size_block = 0
@@ -173,12 +189,11 @@ def mysbrk(size):
     expand_size = 0
     if size%8 != 0:
         expand_size = 8
-    expand_size = expand_size + (size//8)*8 + 8 - virMem[-2]
-    last_mem = virMem[-2] + expand_size
-    virMem[-2] = last_mem
-    for i in range(expand_size//4):
+    expand_size = expand_size + (size//8)*8 + 8
+    virMem[-1] = expand_size
+    for i in range((expand_size//4)):
         virMem.append(None)
-    virMem[-2] = last_mem
+    virMem[-2] = expand_size
     virMem[-1] = 1
 
     
