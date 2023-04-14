@@ -56,13 +56,22 @@ def myalloc(size):
     free_size = 0
     while(True):
         print(n)
-        print(virMem[n])
-        if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
-            break
+        print("lenght of list")
+        print(len(virMem))
+        if n != len(virMem) -1:
+            if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
+                break
+            elif virMem[n] & 1 == 0 and virMem[n] < 8 + (((size//8) + 1) * 8):
+                n = n + virMem[n]//4
+            else:
+                n = n + (virMem[n] - 1) // 4
         else:
-            n = n + (virMem[n] - 1) // 4
+            mysbrk(size)
     free_size = virMem[n]
-    size_block =  (((size//8) + 1)*8) + 8 + 1
+    size_block = 0
+    if size%8 != 0:
+        size_block = 8
+    size_block = size_block + (((size//8))*8) + 8 + 1
     virMem[n] = size_block
     virMem[n + ((size_block - 1)//4) - 1] = size_block
     virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
@@ -80,16 +89,26 @@ def myrealloc(pointer, size):
     n = 1
     free_size = 0
     while(True):
-        print(n)
-        print(virMem[n])
-        if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
-            break
-        elif virMem[n] & 1 == 0 and virMem[n] < 8 + (((size//8) + 1) * 8):
-            n = n + virMem[n]//4
+        #print(n)
+        #print(virMem[n])
+        if n != len(virMem):
+            if virMem[n] & 1 == 0 and virMem[n] >= 8 + (((size//8) + 1) * 8):
+                break
+            elif virMem[n] & 1 == 0 and virMem[n] < 8 + (((size//8) + 1) * 8):
+                n = n + virMem[n]//4
+            else:
+                n = n + (virMem[n] - 1) // 4
         else:
-            n = n + (virMem[n] - 1) // 4
+            if virMem[-2] & 1 == 0:
+                n = n - virMem[-2]//4 
+            else:
+                n = n - (virMem[-2]-1)//4
+            mysbrk(size)
     free_size = virMem[n]
-    size_block =  (((size//8) + 1)*8) + 8 + 1
+    size_block = 0
+    if size%8 != 0:
+        size_block = 8
+    size_block = size_block + (((size//8))*8) + 8 + 1
     virMem[n] = size_block
     virMem[n + ((size_block - 1)//4) - 1] = size_block
     virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
@@ -112,27 +131,17 @@ def myfree(pointer):
     otherwise, does not change the heap
     coalesce after freeing. coalesce lower before coalescing higher address, and update headers last
     """
-<<<<<<< HEAD
-    if virMem[pointer - 1] & 1 == 0:
-    
 
-
-    virMem[pointer] = 0
-=======
     free_amount = 0
 
     if virMem[pointer - 1] & 1 == 0 and virMem[pointer + (virMem[pointer]-1)//4] & 1 == 0: #free and free
         free_amount = virMem[pointer - 1]
         free_amount = free_amount + virMem[pointer] -1
-        virMem[pointer - (virMem[pointer -1]//4)] = free_amount
-        virMem[pointer - (virMem[pointer-1]//4) + (free_amount//4) -1] = free_amount
+        free_amount = free_amount + virMem[pointer + (virMem[pointer]-1)//4]
+        
+        virMem[pointer - (virMem[pointer - 1]//4)] = free_amount
+        virMem[pointer - (virMem[pointer - 1]//4) -1 + (free_amount//4)] = free_amount
 
-        pointer = pointer - (virMem[pointer -1]//4)
-
-        free_amount = virMem[pointer + (virMem[pointer]-1)//4]
-        free_amount = free_amount + virMem[pointer] - 1
-        virMem[pointer] = free_amount
-        virMem[pointer + (free_amount//4) - 1] = free_amount
 
     elif virMem[pointer - 1] & 1 == 0 and virMem[pointer + (virMem[pointer]-1)//4] & 1 == 1: #free and alloced
         free_amount = virMem[pointer - 1]
@@ -150,19 +159,29 @@ def myfree(pointer):
         virMem[pointer] = virMem[pointer]-1
         virMem[pointer + (virMem[pointer])//4 - 1] = virMem[pointer]
 
->>>>>>> refs/remotes/origin/main
-    pass
+
 
 def mysbrk(size):
     """
     grows or shrinks the size of the heap by a number of words specified by the input parameter size
-    you may call this whenever you need to in the course of a simulation, as you need to grow the heap
+    you may call thi
     -> only as much as needed for the allocation, do no extend a free block at the end of the previous space,
     -> use a totally new block.
     thsi call will return an error and halt the simulation if your heap would need to grow past the maximum
     -> size of 100,000 words.
     """
-    pass
+    expand_size = 0
+    if size%8 != 0:
+        expand_size = 8
+    expand_size = expand_size + (size//8)*8 + 8 - virMem[-2]
+    last_mem = virMem[-2] + expand_size
+    virMem[-2] = last_mem
+    for i in range(expand_size//4):
+        virMem.append(None)
+    virMem[-2] = last_mem
+    virMem[-1] = 1
+
+    
 
 def print_result(memory):
     for block_num in range(len(memory)):
