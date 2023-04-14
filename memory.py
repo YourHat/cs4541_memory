@@ -86,6 +86,10 @@ def myfree(pointer):
     otherwise, does not change the heap
     coalesce after freeing. coalesce lower before coalescing higher address, and update headers last
     """
+    if virMem[pointer - 1] & 1 == 0:
+    
+
+
     virMem[pointer] = 0
     pass
 
