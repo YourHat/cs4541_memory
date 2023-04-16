@@ -46,7 +46,10 @@ def main(arg):
                         if len(virMem) + ((int(oper[1])//8) + 1) * 2 < 100000: # make sure its less than 100,000 words
                             pointer_dict[int(oper[3].strip().strip('\n'))] = myrealloc(pointer_dict[int(oper[2])],int(oper[1])) # call myrealloc and add an item in dict
                             myfree(pointer_dict[int(oper[2])]) # call myfree for the original address
-                            pointer_dict.pop(int(oper[2])) # get rid of an item (original address) form dict 
+                            pointer_dict.pop(int(oper[2])) # get rid of an item (original address) form dict
+                    print_result(virMem)
+                    print(pointer_dict)
+                    time.sleep(1)
             print(pointer_dict)
             print_result(virMem) # call print_result to print virtual memory
         else:
@@ -110,7 +113,7 @@ def myalloc(size):
         if size%8 != 0:
             size_block = 8
         size_block = size_block + (((size//8))*8) + 8 + 1
-        if free_size - size_block - 1 < 16:
+        if free_size - (size_block - 1) < 16:
             size_block = free_size + 1
         virMem[n] = size_block # change the header
         virMem[n + ((size_block - 1)//4) - 1] = size_block # change the footer
@@ -121,6 +124,10 @@ def myalloc(size):
             elif virMem[n + ((size_block - 1)//4)] & 1 == 0: # if the next block is free block
                 virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
                 virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            elif size_block < free_size:
+                virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+                virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+
     
     elif imp_exp == "e": #if explicit
         n = root_ind # starting memory address
@@ -164,37 +171,54 @@ def myalloc(size):
         if size%8 != 0:
             size_block = 8
         size_block = size_block + (((size//8))*8) + 8 + 1
-        if free_size - size_block - 1 < 16:
+        if free_size - (size_block - 1) < 16:
             size_block = free_size + 1
         virMem[n] = size_block # change the header
         virMem[n + ((size_block - 1)//4) - 1] = size_block # change the footer
 
 
-        if (n + ((size_block - 1)//4)) != len(virMem) -1: # if the next block is not the last block
-            if virMem[n + ((size_block - 1)//4)] == None: # if the next block is None
-                virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
-                virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
-                virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
-                virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
-                if (root_ind == n):
-                    root_ind = n + ((size_block - 1)//4)
-            elif virMem[n + ((size_block - 1)//4)] & 1 == 0: # if the next block is free
-                virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
-                virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
-                virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
-                virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
-                if (root_ind == n):
-                    root_ind = n + ((size_block - 1)//4)
-
-            elif virMem[n + ((size_block - 1)//4)] & 1 == 1: # if the next block is alloced
-                if virMem[n + 1] == 0: #if prev is 0
-                    root_ind = virMem[n + 2]
-                    virMem[virMem[n + 2] + 1] = 0
-                elif virMem[n + 2] == 0: # if next is 0
-                    virMem[virMem[n + 1] + 2] = 0
-                else:
-                    virMem[virMem[n + 1] + 2] = virMem[n + 2]
-                    virMem[virMem[n + 2] + 1] = virMem[n + 1]
+        if virMem[n + ((size_block - 1)//4)] == None: # if the next block is None
+            virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+            virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
+            virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
+            if (root_ind == n):
+                root_ind = n + ((size_block - 1)//4)
+            if virMem[n+1] != 0:
+                virMem[virMem[n+1]+2] = n + ((size_block-1)//4)
+            if virMem[n + 2] != 0:
+                virMem[virMem[n+2]+1] = n + ((size_block-1)//4)
+        elif virMem[n + ((size_block - 1)//4)] & 1 == 0: # if the next block is free
+            virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+            virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
+            virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
+            if (root_ind == n):
+                root_ind = n + ((size_block - 1)//4)            
+            if virMem[n+1] != 0:
+                virMem[virMem[n+1]+2] = n + ((size_block-1)//4)
+            if virMem[n + 2] != 0:
+                virMem[virMem[n+2]+1] = n + ((size_block-1)//4)
+        elif size_block < free_size: # if the next block is free
+            virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+            virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
+            virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
+            if (root_ind == n):
+                root_ind = n + ((size_block - 1)//4)
+            if virMem[n+1] != 0:
+                virMem[virMem[n+1]+2] = n + ((size_block-1)//4)
+            if virMem[n + 2] != 0:
+                virMem[virMem[n+2]+1] = n + ((size_block-1)//4)
+        elif virMem[n + ((size_block - 1)//4)] & 1 == 1: # if the next block is alloced
+            if virMem[n + 1] == 0: #if prev is 0
+                root_ind = virMem[n + 2]
+                virMem[virMem[n + 2] + 1] = 0
+            elif virMem[n + 2] == 0: # if next is 0
+                virMem[virMem[n + 1] + 2] = 0
+            else:
+                virMem[virMem[n + 1] + 2] = virMem[n + 2]
+                virMem[virMem[n + 2] + 1] = virMem[n + 1]
                 
 
     return n # return the address of the block
@@ -258,7 +282,7 @@ def myrealloc(pointer, size):
         if size%8 != 0:
             size_block = 8
         size_block = size_block + (((size//8))*8) + 8 + 1
-        if free_size - size_block - 1 < 16:
+        if free_size - (size_block - 1) < 16:
             size_block = free_size + 1
         virMem[n] = size_block # change the header
         virMem[n + ((size_block - 1)//4) - 1] = size_block # change the footer
@@ -269,6 +293,10 @@ def myrealloc(pointer, size):
             elif virMem[n + ((size_block - 1)//4)] & 1 == 0: # if the next block is free block
                 virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
                 virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            elif size_block < free_size:
+                virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+                virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+
     
     elif imp_exp == "e": #if explicit
         n = root_ind # starting memory address
@@ -312,37 +340,54 @@ def myrealloc(pointer, size):
         if size%8 != 0:
             size_block = 8
         size_block = size_block + (((size//8))*8) + 8 + 1
-        if free_size - size_block - 1 < 16:
+        if free_size - (size_block - 1) < 16:
             size_block = free_size + 1
         virMem[n] = size_block # change the header
         virMem[n + ((size_block - 1)//4) - 1] = size_block # change the footer
 
 
-        if (n + ((size_block - 1)//4)) != len(virMem) -1: # if the next block is not the last block
-            if virMem[n + ((size_block - 1)//4)] == None: # if the next block is None
-                virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
-                virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
-                virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
-                virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
-                if (root_ind == n):
-                    root_ind = n + ((size_block - 1)//4)
-            elif virMem[n + ((size_block - 1)//4)] & 1 == 0: # if the next block is free
-                virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
-                virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
-                virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
-                virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
-                if (root_ind == n):
-                    root_ind = n + ((size_block - 1)//4)
-
-            elif virMem[n + ((size_block - 1)//4)] & 1 == 1: # if the next block is alloced
-                if virMem[n + 1] == 0: #if prev is 0
-                    root_ind = virMem[n + 2]
-                    virMem[virMem[n + 2] + 1] = 0
-                elif virMem[n + 2] == 0: # if next is 0
-                    virMem[virMem[n + 1] + 2] = 0
-                else:
-                    virMem[virMem[n + 1] + 2] = virMem[n + 2]
-                    virMem[virMem[n + 2] + 1] = virMem[n + 1]
+        if virMem[n + ((size_block - 1)//4)] == None: # if the next block is None
+            virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+            virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
+            virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
+            if (root_ind == n):
+                root_ind = n + ((size_block - 1)//4)
+            if virMem[n+1] != 0:
+                virMem[virMem[n+1]+2] = n + ((size_block-1)//4)
+            if virMem[n + 2] != 0:
+                virMem[virMem[n+2]+1] = n + ((size_block-1)//4)
+        elif virMem[n + ((size_block - 1)//4)] & 1 == 0: # if the next block is free
+            virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+            virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
+            virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
+            if (root_ind == n):
+                root_ind = n + ((size_block - 1)//4)            
+            if virMem[n+1] != 0:
+                virMem[virMem[n+1]+2] = n + ((size_block-1)//4)
+            if virMem[n + 2] != 0:
+                virMem[virMem[n+2]+1] = n + ((size_block-1)//4)
+        elif size_block < free_size: # if the next block is free
+            virMem[n + ((size_block - 1)//4) ] = free_size - (size_block - 1)
+            virMem[n + free_size//4 - 1]  = free_size - (size_block - 1)
+            virMem[n + ((size_block - 1)//4) + 1] = virMem[n + 1]
+            virMem[n + ((size_block - 1)//4) + 2] = virMem[n + 2]
+            if (root_ind == n):
+                root_ind = n + ((size_block - 1)//4)
+            if virMem[n+1] != 0:
+                virMem[virMem[n+1]+2] = n + ((size_block-1)//4)
+            if virMem[n + 2] != 0:
+                virMem[virMem[n+2]+1] = n + ((size_block-1)//4)
+        elif virMem[n + ((size_block - 1)//4)] & 1 == 1: # if the next block is alloced
+            if virMem[n + 1] == 0: #if prev is 0
+                root_ind = virMem[n + 2]
+                virMem[virMem[n + 2] + 1] = 0
+            elif virMem[n + 2] == 0: # if next is 0
+                virMem[virMem[n + 1] + 2] = 0
+            else:
+                virMem[virMem[n + 1] + 2] = virMem[n + 2]
+                virMem[virMem[n + 2] + 1] = virMem[n + 1]
                 
 
 
