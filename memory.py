@@ -10,10 +10,6 @@ start your heap at address 0
 initial heap will be 1000 words
 """
 import sys # to get argv
-import time
-
-
-
 
 def main(arg):
     global pointer_dict, virMem, imp_exp, fir_bes, root_ind
@@ -47,10 +43,6 @@ def main(arg):
                             pointer_dict[int(oper[3].strip().strip('\n'))] = myrealloc(pointer_dict[int(oper[2])],int(oper[1])) # call myrealloc and add an item in dict
                             myfree(pointer_dict[int(oper[2])]) # call myfree for the original address
                             pointer_dict.pop(int(oper[2])) # get rid of an item (original address) form dict
-                    print_result(virMem)
-                    print(pointer_dict)
-                    time.sleep(1)
-            print(pointer_dict)
             print_result(virMem) # call print_result to print virtual memory
         else:
             print("Instruction:\nUsage: python3 memory.py <type of allocation> <type of fit> <file>\ntype of allocation\n  i -> implicit\n  e -> explicit\ntype of fit\n  b -> best fit\n  f -> first fit\n\nexample\npython3 memory.py i b examples/examples/1.in")

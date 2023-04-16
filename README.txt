@@ -16,4 +16,5 @@ Editor: nvim
 Language: python3
 
 reference:
-    https://stackoverflow.com/questions/5661725/format-ints-into-string-of-hex
+    - used to convert decimal to hex
+      https://stackoverflow.com/questions/5661725/format-ints-into-string-of-hex
