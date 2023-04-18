@@ -20,6 +20,7 @@ def main(arg):
         input_file = arg[3] # file name
     except: #if error happens
         print("Instruction:\nUsage: python3 memory.py <type of allocation> <type of fit> <file>\ntype of allocation\n  i -> implicit\n  e -> explicit\ntype of fit\n  b -> best fit\n  f -> first fit\n\nexample\npython3 memory.py i b examples/examples/1.in")
+        return
     
     if arg[1] == "i" or arg[1] == "e":
         if arg[2] == "f" or arg[2] =="b":
@@ -29,21 +30,24 @@ def main(arg):
             virMem[0],virMem[1],virMem[998],virMem[999] = 1,3992,3992,1 #initialze virtual memrory
             if imp_exp == "e":
                 virMem[2], virMem[3] = 0,0
-            with open(input_file, "r") as f:
-                for line in f: #read every line
-                    oper = line.split(",") #split with ","
-                    if oper[0] == "a": # if alloc
-                        if len(virMem) + ((int(oper[1])//8) + 1) * 2 < 100000: # make sure its less than 100,000 words
-                            pointer_dict[int(oper[2].strip().strip('\n'))] = myalloc(int(oper[1])) # call myalloc and add an item in dict
-                    elif oper[0] == "f": # if free
-                        myfree(pointer_dict[int(oper[1].strip().strip('\n'))]) # call myfree 
-                        pointer_dict.pop(int(oper[1])) # get rid of an item from dict
-                    elif oper[0] == "r": # if realloc
-                        if len(virMem) + ((int(oper[1])//8) + 1) * 2 < 100000: # make sure its less than 100,000 words
-                            pointer_dict[int(oper[3].strip().strip('\n'))] = myrealloc(pointer_dict[int(oper[2])],int(oper[1])) # call myrealloc and add an item in dict
-                            myfree(pointer_dict[int(oper[2])]) # call myfree for the original address
-                            pointer_dict.pop(int(oper[2])) # get rid of an item (original address) form dict
-            print_result(virMem) # call print_result to print virtual memory
+            try:
+                with open(input_file, "r") as f:
+                    for line in f: #read every line
+                        oper = line.split(",") #split with ","
+                        if oper[0] == "a": # if alloc
+                            if len(virMem) + ((int(oper[1])//8) + 1) * 2 < 100000: # make sure its less than 100,000 words
+                                pointer_dict[int(oper[2].strip().strip('\n'))] = myalloc(int(oper[1])) # call myalloc and add an item in dict
+                        elif oper[0] == "f": # if free
+                            myfree(pointer_dict[int(oper[1].strip().strip('\n'))]) # call myfree 
+                            pointer_dict.pop(int(oper[1])) # get rid of an item from dict
+                        elif oper[0] == "r": # if realloc
+                            if len(virMem) + ((int(oper[1])//8) + 1) * 2 < 100000: # make sure its less than 100,000 words
+                                pointer_dict[int(oper[3].strip().strip('\n'))] = myrealloc(pointer_dict[int(oper[2])],int(oper[1])) # call myrealloc and add an item in dict
+                                myfree(pointer_dict[int(oper[2])]) # call myfree for the original address
+                                pointer_dict.pop(int(oper[2])) # get rid of an item (original address) form dict
+                print_result(virMem) # call print_result to print virtual memory
+            except:
+                print("file does not exist")
         else:
             print("Instruction:\nUsage: python3 memory.py <type of allocation> <type of fit> <file>\ntype of allocation\n  i -> implicit\n  e -> explicit\ntype of fit\n  b -> best fit\n  f -> first fit\n\nexample\npython3 memory.py i b examples/examples/1.in")
     else:
